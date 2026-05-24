@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "insighta-sdk"
+version = "0.1.0"
+description = "Insighta Cloud SDK - API client and data models"
+readme = "README.md"
+license = "CC-BY-NC-4.0"
+requires-python = ">=3.10"
+authors = [{ name = "insighta cloud Inc." }]
+dependencies = [
+    "requests",
+    "pyyaml",
+]
+
+[project.urls]
+Homepage = "https://insighta.cloud"
+
+[tool.hatch.build.targets.wheel]
+packages = ["insighta_sdk"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
