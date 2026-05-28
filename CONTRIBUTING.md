@@ -122,6 +122,22 @@ New to the project? Here are some ways to get started:
 4. Ensure all tests pass (`pytest`)
 5. Submit a pull request against `main`
 
+## Releasing to PyPI
+
+When publishing a new version:
+
+1. Bump `version` in `pyproject.toml`
+2. Commit the version bump (`chore: bump version to X.Y.Z`)
+3. Tag the commit (`git tag vX.Y.Z`)
+4. Push the commit **and** tag (`git push --tags`)
+5. Build and upload:
+   ```bash
+   python -m build
+   python -m twine upload dist/insighta_sdk-X.Y.Z*
+   ```
+
+**The version bump commit must be pushed before uploading to PyPI.** The Git tag and PyPI version must always match.
+
 ## Multilingual Support (i18n)
 
 This project uses **English** as the primary language for:
