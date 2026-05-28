@@ -1,7 +1,5 @@
 """Tests for insighta_sdk.utils."""
 
-import csv
-import os
 from decimal import Decimal
 
 import pytest

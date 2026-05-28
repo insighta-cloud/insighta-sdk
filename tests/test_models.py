@@ -1,10 +1,8 @@
 """Tests for insighta_sdk.models."""
 
 import os
-import tempfile
 from decimal import Decimal
 
-import pytest
 import yaml
 
 from insighta_sdk.models import (

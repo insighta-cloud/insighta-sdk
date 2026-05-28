@@ -2,23 +2,23 @@
 
 from .client import InsightaClient
 from .models import (
-    Credentials,
-    UploadConfig,
-    OrderGroup,
     CashDeposit,
-    Trade,
-    Holding,
+    Credentials,
     Deposit,
-    RateEntry,
     Dirs,
+    Holding,
+    OrderGroup,
+    RateEntry,
+    Trade,
+    UploadConfig,
 )
 from .utils import (
-    load_order_groups,
-    load_cash_deposits,
-    merge_and_sort_groups,
     fetch_ticker_info,
+    load_cash_deposits,
+    load_order_groups,
     load_rate_file,
     lookup_rate,
+    merge_and_sort_groups,
 )
 
 __all__ = [

@@ -1,6 +1,5 @@
 """Tests for insighta_sdk.client (InsightaClient)."""
 
-import json
 import os
 from decimal import Decimal
 from unittest.mock import MagicMock, patch
@@ -73,7 +72,11 @@ class TestCreatePortfolio:
         config = UploadConfig(
             name="Test", description="", portfolio_type="record",
             currency="USD", budget=Decimal("10000"), balance=Decimal("10000"),
-            order_file="order.csv", items=[{"ticker": "SPY", "type": "stock", "quantity": 10, "ratio": 1.0, "price": 0, "sector": "N/A", "industry": "N/A"}],
+            order_file="order.csv",
+            items=[{
+                "ticker": "SPY", "type": "stock", "quantity": 10,
+                "ratio": 1.0, "price": 0, "sector": "N/A", "industry": "N/A",
+            }],
         )
         pid = client.create_portfolio(config)
         assert pid == "pf-123"
@@ -106,7 +109,7 @@ class TestSearchPortfolios:
         mock_resp.text = '{}'
         mock_req.return_value = mock_resp
 
-        result = client.search_portfolios(search="tech", country="US")
+        client.search_portfolios(search="tech", country="US")
         call_kwargs = mock_req.call_args[1]
         assert call_kwargs["params"]["search"] == "tech"
         assert call_kwargs["params"]["country"] == "US"
@@ -190,7 +193,7 @@ class TestGetMetricsHistory:
         mock_resp.text = '{}'
         mock_req.return_value = mock_resp
 
-        result = client.get_metrics_history("pf-123", metrics="twr", from_t=1000, to_t=2000)
+        client.get_metrics_history("pf-123", metrics="twr", from_t=1000, to_t=2000)
         params = mock_req.call_args[1]["params"]
         assert params["metrics"] == "twr"
         assert params["from_t"] == "1000"
@@ -252,7 +255,7 @@ class TestGetOrders:
         mock_resp.json.return_value = {"data": {"items": [], "next_cursor": None}}
         mock_req.return_value = mock_resp
 
-        result = client.get_orders(portfolio_id="pf-123", limit=10)
+        client.get_orders(portfolio_id="pf-123", limit=10)
         params = mock_req.call_args[1]["params"]
         assert params["portfolio_id"] == "pf-123"
         assert params["limit"] == 10
@@ -267,7 +270,7 @@ class TestGetNews:
         mock_resp.json.return_value = {"data": {"data": []}}
         mock_req.return_value = mock_resp
 
-        result = client.get_news(period=2, source_type="NEWS", min_urgency=3)
+        client.get_news(period=2, source_type="NEWS", min_urgency=3)
         params = mock_req.call_args[1]["params"]
         assert params["period"] == 2
         assert params["source_type"] == "NEWS"

@@ -16,6 +16,7 @@ class TestPortfoliosLive:
 
     def test_create_update_delete(self, live_client):
         from decimal import Decimal
+
         from insighta_sdk.models import UploadConfig
 
         config = UploadConfig(
@@ -26,7 +27,11 @@ class TestPortfoliosLive:
             budget=Decimal("10000"),
             balance=Decimal("10000"),
             order_file="",
-            items=[{"ticker": "AAPL", "type": "stock", "quantity": 10, "ratio": 1.0, "price": 150, "sector": "Tech", "industry": "Consumer Electronics"}],
+            items=[{
+                "ticker": "AAPL", "type": "stock", "quantity": 10,
+                "ratio": 1.0, "price": 150, "sector": "Tech",
+                "industry": "Consumer Electronics",
+            }],
         )
         pid = live_client.create_portfolio(config)
         assert pid
