@@ -27,11 +27,11 @@ class TestDirs:
 
     def test_from_work_named(self):
         d = Dirs.from_work("my-portfolio")
-        assert d._base == "workspaces/my-portfolio"
-        assert d.input == "workspaces/my-portfolio/input"
-        assert d.output == "workspaces/my-portfolio/output"
-        assert d.history_csv == "workspaces/my-portfolio/output/history.csv"
-        assert d.rate_csv == "workspaces/my-portfolio/input/rate.csv"
+        assert d._base == os.path.join("workspaces", "my-portfolio")
+        assert d.input == os.path.join("workspaces", "my-portfolio", "input")
+        assert d.output == os.path.join("workspaces", "my-portfolio", "output")
+        assert d.history_csv == os.path.join("workspaces", "my-portfolio", "output", "history.csv")
+        assert d.rate_csv == os.path.join("workspaces", "my-portfolio", "input", "rate.csv")
 
     def test_ensure_output(self, tmp_path):
         d = Dirs(work="")
