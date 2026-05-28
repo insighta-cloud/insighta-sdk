@@ -41,6 +41,15 @@ docs: update README
 test: add missing test for merge_and_sort_groups
 ```
 
+## Cross-Platform Compatibility
+
+This project must work on both Windows and Linux/macOS:
+
+- Use `os.path.join()` for file paths — never hardcode `/` or `\`
+- In tests, compare paths with `os.path.join()` instead of string literals
+- Avoid shell-specific commands in code; use Python stdlib (`os`, `shutil`, `pathlib`)
+- Test locally on your OS, but don't assume forward slashes in assertions
+
 ## Pull Request Process
 
 1. Fork the repository
