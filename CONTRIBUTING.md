@@ -83,6 +83,16 @@ This project must work on both Windows and Linux/macOS:
 - Avoid shell-specific commands in code; use Python stdlib (`os`, `shutil`, `pathlib`)
 - Test locally on your OS, but don't assume forward slashes in assertions
 
+## Good First Contributions
+
+New to the project? Here are some ways to get started:
+
+- **Add or improve examples** — Add a new script to `examples/` or fix an existing one that doesn't work as expected.
+- **Spec conformance** — Compare `insighta_sdk/client.py` against the [OpenAPI spec](https://github.com/insighta-cloud/insighta/tree/main/insighta-app/openapi-docs) and report or fix any parameter mismatches, missing fields, or incorrect HTTP methods.
+- **Internationalization (i18n)** — Add locale support for CLI-facing error messages or user-visible strings. See the i18n section below for conventions.
+- **Documentation** — Improve docstrings, add type hints to untyped functions, or translate the README into another language.
+- **Test coverage** — Write tests for edge cases or untested utility functions.
+
 ## Pull Request Process
 
 1. Fork the repository
