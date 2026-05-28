@@ -1,5 +1,6 @@
 """Tests for insighta_sdk.client (InsightaClient)."""
 
+import json
 import os
 from decimal import Decimal
 from unittest.mock import MagicMock, patch
@@ -8,6 +9,12 @@ import pytest
 
 from insighta_sdk.client import InsightaClient
 from insighta_sdk.models import CashDeposit, Credentials, OrderGroup, UploadConfig
+
+
+def _get_request_body(mock_req) -> dict:
+    """Extract the JSON body from a mocked requests.request call."""
+    call_kwargs = mock_req.call_args[1]
+    return json.loads(call_kwargs["data"])
 
 
 @pytest.fixture
@@ -80,8 +87,7 @@ class TestCreatePortfolio:
         )
         pid = client.create_portfolio(config)
         assert pid == "pf-123"
-        call_kwargs = mock_req.call_args[1]
-        body = call_kwargs["json"]
+        body = _get_request_body(mock_req)
         assert body["name"] == "Test"
         assert body["budget"] == 10000.0
 
@@ -143,7 +149,7 @@ class TestSendOrder:
         )
         result = client.send_order("pf-123", group, "USD")
         assert result["order_id"] == "o-1"
-        body = mock_req.call_args[1]["json"]
+        body = _get_request_body(mock_req)
         assert body["portfolio_id"] == "pf-123"
         assert body["payment_currency"] == "USD"
 
@@ -158,12 +164,12 @@ class TestSendOrder:
         group = OrderGroup(
             group_id="1", currency="JPY",
             items=[{"ticker": "AAPL", "quantity": 5, "price": 150.0}],
-            cash_deposits=[CashDeposit(type="budget", amount=100000.0, currency="JPY")],
-            exchange_rate=155.0,
+            cash_deposits=[CashDeposit(type="budget", amount=Decimal("100000"), currency="JPY")],
+            exchange_rate=Decimal("155.0"),
             memo="test memo",
         )
         client.send_order("pf-123", group, "USD")
-        body = mock_req.call_args[1]["json"]
+        body = _get_request_body(mock_req)
         assert body["custom_exchange_rate"] == 155.0
         assert body["is_custom_exchange_rate"] is True
         assert body["memo"] == "test memo"
@@ -210,7 +216,7 @@ class TestUpdatePortfolio:
         mock_req.return_value = mock_resp
 
         result = client.update_portfolio("pf-123", name="New Name", is_public=True)
-        body = mock_req.call_args[1]["json"]
+        body = _get_request_body(mock_req)
         assert body["name"] == "New Name"
         assert body["is_public"] is True
         assert "PUT" == mock_req.call_args[0][0]
@@ -318,7 +324,7 @@ class TestParseImage:
         mock_req.return_value = mock_resp
 
         result = client.parse_image(files=["abc123"], prompt="Describe this image")
-        body = mock_req.call_args[1]["json"]
+        body = _get_request_body(mock_req)
         assert body["files"] == ["abc123"]
         assert body["prompt"] == "Describe this image"
         assert result["data"]["analysis"] == "some result"

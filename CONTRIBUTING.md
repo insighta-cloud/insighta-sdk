@@ -63,6 +63,27 @@ Live tests are skipped by default when running `pytest` without `--live`.
 - Type hints required for public APIs
 - Use `Decimal` for financial values, never `float`
 
+### Docstrings
+
+Use [Google-style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) docstrings with `Args`, `Returns`, `Raises` sections as needed:
+
+```python
+def get_news(self, period: int, source_type: str | None = None) -> dict:
+    """Fetch recent news articles.
+
+    Args:
+        period: Number of days to look back.
+        source_type: Optional filter by source type.
+
+    Returns:
+        Dict with "data" key containing list of news items.
+
+    Raises:
+        requests.HTTPError: If the API returns a non-2xx status.
+    """
+    ...
+```
+
 ## Commit Messages
 
 Use [Conventional Commits](https://www.conventionalcommits.org/):

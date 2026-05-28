@@ -11,7 +11,7 @@ PORTFOLIO_CURRENCY = "KRW"
 
 # --- Load order groups from CSV ---
 order_groups = load_order_groups("order.csv")
-merged = merge_and_sort_groups(order_groups, cash_deposits=[], memos={})
+merged = merge_and_sort_groups(order_groups, deposits_by_gdt={}, memos={})
 
 # --- Send each order group ---
 for group in merged:
