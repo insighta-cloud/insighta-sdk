@@ -51,6 +51,12 @@ portfolio_id = client.create_portfolio(config)
 - **Utilities** — Rate lookup, order grouping, deposit merging
 - **Workspace Management** — `Dirs` class for consistent file path resolution
 
+## Use Cases
+
+- **AI Agent-driven portfolio automation** — Integrate with LLM agents (e.g., LangChain, CrewAI) to build autonomous rebalancing, signal-based trading, or research-to-execution pipelines using the SDK as the execution layer.
+- **Backtesting dashboards** — Pull NAV/metrics history and visualize portfolio performance programmatically.
+- **Multi-portfolio management** — Automate creation, monitoring, and teardown of simulation portfolios at scale.
+
 ## API Reference
 
 ### Client
