@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "insighta-sdk"
-version = "0.1.0"
+version = "0.1.2"
 description = "Insighta Cloud SDK - API client and data models"
 readme = "README.md"
 license = "CC-BY-NC-4.0"
