@@ -195,3 +195,127 @@ class TestGetMetricsHistory:
         assert params["metrics"] == "twr"
         assert params["from_t"] == "1000"
         assert params["to_t"] == "2000"
+
+
+class TestUpdatePortfolio:
+    @patch("insighta_sdk.client.requests.request")
+    def test_update(self, mock_req, client):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = '{"data": {"portfolio_id": "pf-123", "result": "updated"}}'
+        mock_resp.json.return_value = {"data": {"portfolio_id": "pf-123", "result": "updated"}}
+        mock_req.return_value = mock_resp
+
+        result = client.update_portfolio("pf-123", name="New Name", is_public=True)
+        body = mock_req.call_args[1]["json"]
+        assert body["name"] == "New Name"
+        assert body["is_public"] is True
+        assert "PUT" == mock_req.call_args[0][0]
+        assert "/portfolios/pf-123" in mock_req.call_args[0][1]
+        assert result["data"]["result"] == "updated"
+
+
+class TestTriggerHistoryBackfill:
+    @patch("insighta_sdk.client.requests.request")
+    def test_backfill(self, mock_req, client):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = '{"data": {"status": "processing"}}'
+        mock_resp.json.return_value = {"data": {"status": "processing"}}
+        mock_req.return_value = mock_resp
+
+        result = client.trigger_history_backfill("pf-123")
+        assert "POST" == mock_req.call_args[0][0]
+        assert "/portfolios/pf-123/history-backfill" in mock_req.call_args[0][1]
+        assert result["data"]["status"] == "processing"
+
+
+class TestGetOrders:
+    @patch("insighta_sdk.client.requests.request")
+    def test_by_order_ids(self, mock_req, client):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = '{"data": [{"id": "o-1"}]}'
+        mock_resp.json.return_value = {"data": [{"id": "o-1"}]}
+        mock_req.return_value = mock_resp
+
+        result = client.get_orders(order_ids="o-1,o-2")
+        params = mock_req.call_args[1]["params"]
+        assert params["order_ids"] == "o-1,o-2"
+        assert result["data"][0]["id"] == "o-1"
+
+    @patch("insighta_sdk.client.requests.request")
+    def test_by_portfolio_id(self, mock_req, client):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = '{}'
+        mock_resp.json.return_value = {"data": {"items": [], "next_cursor": None}}
+        mock_req.return_value = mock_resp
+
+        result = client.get_orders(portfolio_id="pf-123", limit=10)
+        params = mock_req.call_args[1]["params"]
+        assert params["portfolio_id"] == "pf-123"
+        assert params["limit"] == 10
+
+
+class TestGetNews:
+    @patch("insighta_sdk.client.requests.request")
+    def test_news(self, mock_req, client):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = '{}'
+        mock_resp.json.return_value = {"data": {"data": []}}
+        mock_req.return_value = mock_resp
+
+        result = client.get_news(period=2, source_type="NEWS", min_urgency=3)
+        params = mock_req.call_args[1]["params"]
+        assert params["period"] == 2
+        assert params["source_type"] == "NEWS"
+        assert params["min_urgency"] == 3
+
+
+class TestSearchEntities:
+    @patch("insighta_sdk.client.requests.request")
+    def test_search(self, mock_req, client):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = '{}'
+        mock_resp.json.return_value = {"data": {"total": 1, "results": [{"id": "e-1", "name": "Elon Musk"}]}}
+        mock_req.return_value = mock_resp
+
+        result = client.search_entities("Elon")
+        params = mock_req.call_args[1]["params"]
+        assert params["keyword"] == "Elon"
+        assert result["data"]["total"] == 1
+
+
+class TestGetImageUploadUrl:
+    @patch("insighta_sdk.client.requests.request")
+    def test_upload_url(self, mock_req, client):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = '{}'
+        mock_resp.json.return_value = {"data": {"upload_url": "https://s3.example.com/upload", "file_key": "abc123"}}
+        mock_req.return_value = mock_resp
+
+        result = client.get_image_upload_url("screenshot.png", content_type="image/png")
+        params = mock_req.call_args[1]["params"]
+        assert params["filename"] == "screenshot.png"
+        assert params["content_type"] == "image/png"
+        assert result["data"]["file_key"] == "abc123"
+
+
+class TestParseImage:
+    @patch("insighta_sdk.client.requests.request")
+    def test_parse(self, mock_req, client):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = '{}'
+        mock_resp.json.return_value = {"data": {"analysis": "some result"}}
+        mock_req.return_value = mock_resp
+
+        result = client.parse_image(files=["abc123"], prompt="Describe this image")
+        body = mock_req.call_args[1]["json"]
+        assert body["files"] == ["abc123"]
+        assert body["prompt"] == "Describe this image"
+        assert result["data"]["analysis"] == "some result"

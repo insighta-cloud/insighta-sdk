@@ -30,6 +30,7 @@ class InsightaClient:
             payload_str = _json.dumps(payload, indent=2, ensure_ascii=False)
             log.debug("%s %s\n%s", method, url, payload_str)
             log_path = os.path.join(self.output_dir, "request_payload.log")
+            os.makedirs(self.output_dir, exist_ok=True)
             with open(log_path, "a", encoding="utf-8") as lf:
                 lf.write(f"=== {method} {url} ===\n{payload_str}\n\n")
         else:
@@ -142,3 +143,62 @@ class InsightaClient:
             ]
         resp = self._request("POST", "/orders", json=body)
         return resp.json() if resp.text else {}
+
+    def update_portfolio(self, portfolio_id: str, **kwargs) -> dict:
+        """PUT /portfolios/{portfolio_id}."""
+        resp = self._request("PUT", f"/portfolios/{portfolio_id}", json=kwargs)
+        return resp.json()
+
+    def trigger_history_backfill(self, portfolio_id: str) -> dict:
+        """POST /portfolios/{portfolio_id}/history-backfill."""
+        resp = self._request("POST", f"/portfolios/{portfolio_id}/history-backfill")
+        return resp.json()
+
+    def get_orders(
+        self,
+        order_ids: str | None = None,
+        portfolio_id: str | None = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        status: str | None = None,
+        limit: int | None = None,
+        cursor: str | None = None,
+    ) -> dict:
+        """GET /orders."""
+        params = {k: v for k, v in {
+            "order_ids": order_ids, "portfolio_id": portfolio_id,
+            "start_date": start_date, "end_date": end_date,
+            "status": status, "limit": limit, "cursor": cursor,
+        }.items() if v is not None}
+        resp = self._request("GET", "/orders", params=params)
+        return resp.json()
+
+    def get_news(
+        self,
+        period: int,
+        source_type: str | None = None,
+        min_urgency: int | None = None,
+    ) -> dict:
+        """GET /news."""
+        params: dict = {"period": period}
+        if source_type is not None:
+            params["source_type"] = source_type
+        if min_urgency is not None:
+            params["min_urgency"] = min_urgency
+        resp = self._request("GET", "/news", params=params)
+        return resp.json()
+
+    def search_entities(self, keyword: str) -> dict:
+        """GET /search/entities."""
+        resp = self._request("GET", "/search/entities", params={"keyword": keyword})
+        return resp.json()
+
+    def get_image_upload_url(self, filename: str, content_type: str = "image/png") -> dict:
+        """GET /images/parse — presigned upload URL."""
+        resp = self._request("GET", "/images/parse", params={"filename": filename, "content_type": content_type})
+        return resp.json()
+
+    def parse_image(self, files: list[str], prompt: str) -> dict:
+        """POST /images/parse — AI image analysis."""
+        resp = self._request("POST", "/images/parse", json={"files": files, "prompt": prompt})
+        return resp.json()
