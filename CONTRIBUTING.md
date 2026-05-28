@@ -23,9 +23,42 @@ pip install -e ".[dev]"
 pytest
 ```
 
+## Linting
+
+This project uses [Ruff](https://docs.astral.sh/ruff/) for linting and import sorting.
+
+```bash
+ruff check .          # check for issues
+ruff check --fix .    # auto-fix
+```
+
+A pre-commit hook is provided. Install it once:
+
+```bash
+pre-commit install
+```
+
+## Live Tests
+
+Integration tests run against the dev API. They require a valid API key:
+
+```bash
+export INSIGHTA_DEV_API_KEY="your-dev-key"
+pytest tests/test_live.py --live -v
+```
+
+On Windows (PowerShell):
+
+```powershell
+$env:INSIGHTA_DEV_API_KEY = "your-dev-key"
+pytest tests/test_live.py --live -v
+```
+
+Live tests are skipped by default when running `pytest` without `--live`.
+
 ## Code Style
 
-- Follow PEP 8
+- Follow PEP 8 (enforced by Ruff)
 - All comments and docstrings in English
 - Type hints required for public APIs
 - Use `Decimal` for financial values, never `float`
