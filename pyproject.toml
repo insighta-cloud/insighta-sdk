@@ -9,10 +9,15 @@ description = "Insighta Cloud SDK - API client and data models"
 readme = "README.md"
 license = "CC-BY-NC-4.0"
 requires-python = ">=3.10"
-authors = [{ name = "insighta cloud Inc." }]
+authors = [{ name = "insighta cloud Inc.", email = "tech@insighta.cloud" }]
 dependencies = [
     "requests",
     "pyyaml",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
 ]
 
 [project.urls]
@@ -23,3 +28,4 @@ packages = ["insighta_sdk"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = ["live: requires real API connection (INSIGHTA_DEV_API_KEY)"]
