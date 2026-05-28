@@ -8,6 +8,25 @@ Insighta Cloud SDK — API client and data models for portfolio management.
 pip install insighta-sdk
 ```
 
+## Authentication
+
+You can obtain an API key from the **Developer** tab at [insight.cloud/settings](https://insight.cloud/settings).
+
+Save the key in a `credentials.yaml` file:
+
+```yaml
+api_key: "your-api-key-here"
+endpoint: "https://openapi.insighta.cloud"
+```
+
+Load it in your code:
+
+```python
+from insighta_sdk import Credentials
+
+creds = Credentials.from_file("credentials.yaml")
+```
+
 ## Quick Start
 
 ```python
@@ -57,12 +76,9 @@ portfolio_id = client.create_portfolio(config)
 | `lookup_rate(entries, dt, cur, base)` | Find applicable rate for a trade |
 | `fetch_ticker_info(tickers)` | Query ticker metadata from API |
 
-## API Endpoints
+## API Endpoint
 
-| Environment | Base URL |
-|-------------|----------|
-| Production | `https://openapi.insighta.cloud` |
-| Development | `https://dev.openapi.insighta.cloud` |
+Base URL: `https://openapi.insighta.cloud`
 
 OpenAPI spec: [`insighta-app/openapi-docs/`](https://github.com/insighta-cloud/insighta/tree/main/insighta-app/openapi-docs)
 
