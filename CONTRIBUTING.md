@@ -116,11 +116,31 @@ New to the project? Here are some ways to get started:
 
 ## Pull Request Process
 
+### Issues
+
+- **Always open an issue first** before starting work on a feature or bug fix.
+- Use labels to categorize: `bug`, `feat`, `docs`, `breaking`.
+- Assign yourself to the issue when you start working on it.
+
+### Branch & PR
+
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feat/my-feature`)
 3. Write tests for new functionality
 4. Ensure all tests pass (`pytest`)
 5. Submit a pull request against `main`
+
+### PR Conventions
+
+- PR title must follow [Conventional Commits](https://www.conventionalcommits.org/) (e.g., `feat: add delete_order method`)
+- Reference the issue in the PR body: `Closes #123`
+- For breaking changes, include `BREAKING CHANGE:` in the PR body with a migration note
+- Add a label to hint the version bump: `patch`, `minor`, or `major`
+
+### Version Bumps
+
+- **Contributors do NOT bump the version.** Maintainers decide the version at release time based on PR labels and changelog.
+- CI runs lint + tests on every PR. Merging requires all checks to pass.
 
 ## Releasing to PyPI
 
