@@ -40,17 +40,17 @@ pre-commit install
 
 ## Live Tests
 
-Integration tests run against the dev API. They require a valid API key:
+Integration tests run against the API and require a valid API key:
 
 ```bash
-export INSIGHTA_DEV_API_KEY="your-dev-key"
+export INSIGHTA_API_KEY="your-api-key"
 pytest tests/test_live.py --live -v
 ```
 
 On Windows (PowerShell):
 
 ```powershell
-$env:INSIGHTA_DEV_API_KEY = "your-dev-key"
+$env:INSIGHTA_API_KEY = "your-api-key"
 pytest tests/test_live.py --live -v
 ```
 

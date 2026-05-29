@@ -30,7 +30,7 @@ packages = ["insighta_sdk"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-markers = ["live: requires real API connection (INSIGHTA_DEV_API_KEY)"]
+markers = ["live: requires real API connection"]
 
 [tool.ruff]
 target-version = "py310"

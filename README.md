@@ -1,5 +1,10 @@
 # insighta-sdk
 
+[![CI](https://github.com/insighta-cloud/insighta-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/insighta-cloud/insighta-sdk/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/insighta-sdk)](https://pypi.org/project/insighta-sdk/)
+[![Python](https://img.shields.io/pypi/pyversions/insighta-sdk)](https://pypi.org/project/insighta-sdk/)
+[![License](https://img.shields.io/badge/license-CC--BY--NC--4.0-blue)](LICENSE)
+
 Insighta Cloud SDK — API client and data models for portfolio management.
 
 ## Installation
