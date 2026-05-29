@@ -124,6 +124,20 @@ New to the project? Here are some ways to get started:
 
 ## Releasing to PyPI
 
+### Versioning (SemVer)
+
+This project follows [Semantic Versioning](https://semver.org/): `MAJOR.MINOR.PATCH`
+
+| Bump | When | Example |
+|------|------|---------|
+| **PATCH** (0.1.5 → 0.1.6) | Bug fixes, docstring updates, internal refactors with no API change | Fix rate lookup edge case |
+| **MINOR** (0.1.6 → 0.2.0) | New features that are backward-compatible (new methods, new optional params) | Add `delete_order()` method |
+| **MAJOR** (0.2.0 → 1.0.0) | Breaking changes (removed/renamed methods, changed return types, dropped Python version support) | Rename `send_order` → `create_order` |
+
+> While pre-1.0 (`0.x.y`), minor bumps may include small breaking changes. After 1.0, strict SemVer applies.
+
+### Release Steps
+
 When publishing a new version:
 
 1. Bump `version` in `pyproject.toml`
