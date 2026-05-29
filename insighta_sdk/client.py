@@ -385,3 +385,45 @@ class InsightaClient:
         """
         resp = self._request("POST", "/images/parse", json={"files": files, "prompt": prompt})
         return resp.json()
+
+    def delete_order(self, order_id: str) -> dict[str, Any]:
+        """Delete an order.
+
+        Args:
+            order_id: ID of the order to delete.
+
+        Returns:
+            Dict with confirmation message and order_id.
+
+        Raises:
+            requests.HTTPError: If the API returns a non-2xx status.
+        """
+        resp = self._request("DELETE", f"/orders/{order_id}")
+        return resp.json()
+
+    def send_copilot_message(
+        self,
+        message: str,
+        room_id: str | None = None,
+        last_messages: list[dict[str, Any]] | None = None,
+    ) -> dict[str, Any]:
+        """Send a message to the Copilot and receive a response.
+
+        Args:
+            message: The user message text.
+            room_id: Optional chat room ID (defaults to "default" server-side).
+            last_messages: Optional conversation history for context.
+
+        Returns:
+            Dict containing message_id, reply, and session_id.
+
+        Raises:
+            requests.HTTPError: If the API returns a non-2xx status.
+        """
+        body: dict[str, Any] = {"message": message}
+        if room_id is not None:
+            body["room_id"] = room_id
+        if last_messages is not None:
+            body["last_messages"] = last_messages
+        resp = self._request("POST", "/copilot/message", json=body)
+        return resp.json()

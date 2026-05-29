@@ -74,3 +74,20 @@ class TestHistoryLive:
             pid = portfolios[0].get("id") or portfolios[0].get("portfolio_id")
             result = live_client.get_metrics_history(pid, metrics="twr")
             assert isinstance(result, dict)
+
+
+
+class TestCopilotMessageLive:
+    def test_send_message(self, live_client):
+        result = live_client.send_copilot_message("Hello, what can you do?")
+        assert "reply" in result
+        assert "message_id" in result
+
+
+class TestDeleteOrderLive:
+    def test_delete_nonexistent(self, live_client):
+        import requests
+
+        with pytest.raises(requests.HTTPError) as exc_info:
+            live_client.delete_order("nonexistent-order-id")
+        assert exc_info.value.response.status_code in (404, 400)

@@ -328,3 +328,50 @@ class TestParseImage:
         assert body["files"] == ["abc123"]
         assert body["prompt"] == "Describe this image"
         assert result["data"]["analysis"] == "some result"
+
+
+class TestDeleteOrder:
+    @patch("insighta_sdk.client.requests.request")
+    def test_delete(self, mock_req, client):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = '{"message": "Order deleted successfully", "order_id": "o-123"}'
+        mock_resp.json.return_value = {"message": "Order deleted successfully", "order_id": "o-123"}
+        mock_req.return_value = mock_resp
+
+        result = client.delete_order("o-123")
+        assert "DELETE" == mock_req.call_args[0][0]
+        assert "/orders/o-123" in mock_req.call_args[0][1]
+        assert result["order_id"] == "o-123"
+
+
+class TestSendCopilotMessage:
+    @patch("insighta_sdk.client.requests.request")
+    def test_basic_message(self, mock_req, client):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = '{"message_id": "m-1", "reply": "Hello!", "session_id": "s-1"}'
+        mock_resp.json.return_value = {"message_id": "m-1", "reply": "Hello!", "session_id": "s-1"}
+        mock_req.return_value = mock_resp
+
+        result = client.send_copilot_message("Hi there")
+        body = _get_request_body(mock_req)
+        assert body["message"] == "Hi there"
+        assert "room_id" not in body
+        assert result["reply"] == "Hello!"
+        assert result["session_id"] == "s-1"
+
+    @patch("insighta_sdk.client.requests.request")
+    def test_with_room_id_and_history(self, mock_req, client):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = '{}'
+        mock_resp.json.return_value = {"message_id": "m-2", "reply": "OK", "session_id": "s-2"}
+        mock_req.return_value = mock_resp
+
+        history = [{"role": "user", "content": [{"text": "prev"}]}]
+        result = client.send_copilot_message("follow up", room_id="room-1", last_messages=history)
+        body = _get_request_body(mock_req)
+        assert body["room_id"] == "room-1"
+        assert body["last_messages"] == history
+        assert result["message_id"] == "m-2"
