@@ -375,3 +375,77 @@ class TestSendCopilotMessage:
         assert body["room_id"] == "room-1"
         assert body["last_messages"] == history
         assert result["message_id"] == "m-2"
+
+
+class TestPriceAlerts:
+    @patch("insighta_sdk.client.requests.request")
+    def test_get(self, mock_req, client):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = '{}'
+        mock_resp.json.return_value = {"items": [], "next_cursor": "alert-2"}
+        mock_req.return_value = mock_resp
+
+        result = client.get_price_alerts(limit=10, cursor="alert-1", ticker="AAPL", status="ACTIVE")
+
+        assert mock_req.call_args[0][0] == "GET"
+        assert mock_req.call_args[0][1].endswith("/price-alerts")
+        assert mock_req.call_args[1]["params"] == {
+            "limit": 10,
+            "cursor": "alert-1",
+            "ticker": "AAPL",
+            "status": "ACTIVE",
+        }
+        assert result["next_cursor"] == "alert-2"
+
+    @patch("insighta_sdk.client.requests.request")
+    def test_create(self, mock_req, client):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = '{}'
+        mock_resp.json.return_value = {"result": "success", "alert": {"id": "alert-1"}}
+        mock_req.return_value = mock_resp
+
+        result = client.create_price_alert("AAPL", "ABOVE", "250.00", label="Earnings target")
+
+        assert mock_req.call_args[0][0] == "POST"
+        assert _get_request_body(mock_req) == {
+            "ticker": "AAPL",
+            "direction": "ABOVE",
+            "target_price": "250.00",
+            "label": "Earnings target",
+        }
+        assert result["alert"]["id"] == "alert-1"
+
+    @patch("insighta_sdk.client.requests.request")
+    def test_update(self, mock_req, client):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = '{}'
+        mock_resp.json.return_value = {"result": "success", "alert": {"id": "alert-1"}}
+        mock_req.return_value = mock_resp
+
+        result = client.update_price_alert("alert-1", target_price="260.00", rearm=True)
+
+        assert mock_req.call_args[0][0] == "PATCH"
+        assert mock_req.call_args[0][1].endswith("/price-alerts/alert-1")
+        assert _get_request_body(mock_req) == {"target_price": "260.00", "rearm": True}
+        assert result["alert"]["id"] == "alert-1"
+
+    def test_update_requires_a_field(self, client):
+        with pytest.raises(ValueError, match="at least one field"):
+            client.update_price_alert("alert-1")
+
+    @patch("insighta_sdk.client.requests.request")
+    def test_delete(self, mock_req, client):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = '{}'
+        mock_resp.json.return_value = {"result": "success", "id": "alert-1"}
+        mock_req.return_value = mock_resp
+
+        result = client.delete_price_alert("alert-1")
+
+        assert mock_req.call_args[0][0] == "DELETE"
+        assert mock_req.call_args[0][1].endswith("/price-alerts/alert-1")
+        assert result["id"] == "alert-1"

@@ -427,3 +427,130 @@ class InsightaClient:
             body["last_messages"] = last_messages
         resp = self._request("POST", "/copilot/message", json=body)
         return resp.json()
+
+    def get_price_alerts(
+        self,
+        limit: int | None = None,
+        cursor: str | None = None,
+        ticker: str | None = None,
+        status: str | None = None,
+    ) -> dict[str, Any]:
+        """List the authenticated user's ticker price alerts.
+
+        Args:
+            limit: Maximum number of alerts to return (1--100).
+            cursor: Pagination cursor returned as ``next_cursor``.
+            ticker: Optional uppercase ticker symbol filter.
+            status: Optional alert status (``ACTIVE``, ``DISABLED``, or
+                ``TRIGGERED``).
+
+        Returns:
+            Dict containing ``items`` and an optional ``next_cursor``.
+
+        Raises:
+            requests.HTTPError: If the API returns a non-2xx status.
+        """
+        params = {
+            key: value
+            for key, value in {
+                "limit": limit,
+                "cursor": cursor,
+                "ticker": ticker,
+                "status": status,
+            }.items()
+            if value is not None
+        }
+        resp = self._request("GET", "/price-alerts", params=params)
+        return resp.json()
+
+    def create_price_alert(
+        self,
+        ticker: str,
+        direction: str,
+        target_price: str,
+        label: str = "",
+    ) -> dict[str, Any]:
+        """Create a ticker price alert.
+
+        Args:
+            ticker: Ticker symbol to monitor.
+            direction: Trigger direction, ``ABOVE`` or ``BELOW``.
+            target_price: Positive decimal price at which to trigger.
+            label: Optional human-readable label, up to 80 characters.
+
+        Returns:
+            Dict containing the created alert.
+
+        Raises:
+            requests.HTTPError: If the API returns a non-2xx status.
+        """
+        body = {
+            "ticker": ticker,
+            "direction": direction,
+            "target_price": target_price,
+            "label": label,
+        }
+        resp = self._request("POST", "/price-alerts", json=body)
+        return resp.json()
+
+    def update_price_alert(
+        self,
+        alert_id: str,
+        *,
+        label: str | None = None,
+        direction: str | None = None,
+        target_price: str | None = None,
+        status: str | None = None,
+        rearm: bool = False,
+    ) -> dict[str, Any]:
+        """Update a ticker price alert.
+
+        Provide at least one field to update. Set ``rearm`` to reactivate a
+        triggered alert and clear its trigger metadata.
+
+        Args:
+            alert_id: ID of the alert to update.
+            label: New label, up to 80 characters.
+            direction: New trigger direction, ``ABOVE`` or ``BELOW``.
+            target_price: New positive decimal trigger price.
+            status: New status, ``ACTIVE`` or ``DISABLED``.
+            rearm: Reactivate a triggered alert.
+
+        Returns:
+            Dict containing the updated alert.
+
+        Raises:
+            ValueError: If no update field or rearm flag is supplied.
+            requests.HTTPError: If the API returns a non-2xx status.
+        """
+        body = {
+            key: value
+            for key, value in {
+                "label": label,
+                "direction": direction,
+                "target_price": target_price,
+                "status": status,
+            }.items()
+            if value is not None
+        }
+        if rearm:
+            body["rearm"] = True
+        if not body:
+            raise ValueError("provide at least one field to update or set rearm=True")
+        resp = self._request("PATCH", f"/price-alerts/{alert_id}", json=body)
+        return resp.json()
+
+    def delete_price_alert(self, alert_id: str) -> dict[str, Any]:
+        """Delete a ticker price alert.
+
+        Args:
+            alert_id: ID of the alert to delete.
+
+        Returns:
+            Dict containing the deleted alert ID.
+
+        Raises:
+            requests.HTTPError: If the API returns a non-2xx status.
+        """
+        resp = self._request("DELETE", f"/price-alerts/{alert_id}")
+        return resp.json()

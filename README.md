@@ -75,6 +75,10 @@ portfolio_id = client.create_portfolio(config)
 | `send_order(portfolio_id, group, currency)` | Submit an order group |
 | `get_nav_history(id)` | Get NAV history |
 | `get_metrics_history(id, ...)` | Get metrics (TWR, etc.) |
+| `get_price_alerts(...)` | List ticker price alerts |
+| `create_price_alert(ticker, direction, target_price, ...)` | Create a ticker price alert |
+| `update_price_alert(alert_id, ...)` | Update or rearm a ticker price alert |
+| `delete_price_alert(alert_id)` | Delete a ticker price alert |
 
 ### Utilities
 
