@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.0] - 2026-11-05
+
+### Added
+- Ticker price alert client methods: list, create, update/rearm, and delete
+
 ## [0.1.5] - 2026-05-28
 
 ### Changed
